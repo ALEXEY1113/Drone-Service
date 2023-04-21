@@ -7,6 +7,7 @@ public class Program
     {
         String? line;
         bool dronesSetup = false;
+        Dictionary<Drone, int> droneSquad = null;
         Stack<LocationDelivery?> locationStacks = new Stack<LocationDelivery?>();
         Queue<LocationDelivery?> queueLocations = new Queue<LocationDelivery?>();
 
@@ -23,7 +24,7 @@ public class Program
             {
                 if (!dronesSetup)
                 {
-                    Dictionary<Drone, int> droneSquad = StringParser.SetupDrones(line);
+                    droneSquad = StringParser.SetupDrones(line);
                     dronesSetup = true;
 
                     //Read the next line
@@ -44,7 +45,13 @@ public class Program
             
             //close the file
             sr.Close();
-            //Console.ReadLine();
+
+            AssignmentCenterService center = new AssignmentCenterService();
+            center.DroneSquad = droneSquad;
+            center.Locations = queueLocations;
+            center.Execute();
+
+            center.PrintRoutes();
         }
         catch (Exception e)
         {

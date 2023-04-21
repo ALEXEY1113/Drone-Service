@@ -1,5 +1,4 @@
 ﻿using MyDroneService.Models;
-using System.Text;
 
 namespace MyDroneService.Services
 {
@@ -14,7 +13,7 @@ namespace MyDroneService.Services
 
             for (int i = 0; i < drones.Length; i++)
             {
-                if (i%2 == 0)
+                if (i % 2 == 0)
                 {
                     drone = new Drone(drones[i]);
                 }
@@ -22,8 +21,7 @@ namespace MyDroneService.Services
                 {
                     if (drone != null)
                     {
-                        string weight = drones[i].Replace("[", "").Replace("]", "");
-                        drone.MaxLoadWeight = int.Parse(weight);
+                        drone.MaxLoadWeight = WeightParser(drones[i]);
 
                         squadDrone.Add(drone, drone.MaxLoadWeight);
                     }
@@ -31,7 +29,6 @@ namespace MyDroneService.Services
             }
 
             //write the line to console window
-            //Console.WriteLine(dronesInfo);
             return squadDrone;
         }
 
@@ -50,15 +47,19 @@ namespace MyDroneService.Services
                 {
                     if (locationDelivery != null)
                     {
-                        string weight = location[i].Replace("[", "").Replace("]", "");
-                        locationDelivery.PackageWeight = int.Parse(weight);
+                        locationDelivery.PackageWeight = WeightParser(location[i]);
                     }
                 }
             }
 
             //write the line to console window
-            //Console.WriteLine(locationInfo);
             return locationDelivery;
+        }
+
+        private static int WeightParser(string str)
+        {
+            string weight = str.Replace("[", "").Replace("]", "");
+            return int.Parse(weight);
         }
     }
 }
