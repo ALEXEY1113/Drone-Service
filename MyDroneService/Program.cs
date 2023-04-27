@@ -1,57 +1,37 @@
-﻿using MyDroneService.Models;
+﻿using MyDroneService.Exceptions;
+using MyDroneService.Models;
 using MyDroneService.Services;
 
 public class Program
 {
     public static void Main(string[] args)
     {
-        String? line;
-        bool dronesSetup = false;
-        Dictionary<Drone, int> droneSquad = null;
-        Stack<LocationDelivery?> locationStacks = new Stack<LocationDelivery?>();
-        Queue<LocationDelivery?> queueLocations = new Queue<LocationDelivery?>();
+        IDictionary<Drone, int> droneSquad;
+        IEnumerable<Packages> queueLocations;
 
         try
         {
-            //Pass the file path and file name to the StreamReader constructor
-            StreamReader sr = new StreamReader("..\\..\\..\\InputFolder\\Input.txt");
-            
-            //Read the first line of text
-            line = sr.ReadLine();
-            
-            //Continue to read until you reach end of file
-            while (line != null)
-            {
-                if (!dronesSetup)
-                {
-                    droneSquad = StringParser.SetupDrones(line);
-                    dronesSetup = true;
-
-                    //Read the next line
-                    line = sr.ReadLine();
-                }
-                
-                if (line != null)
-                {
-                    if (dronesSetup)
-                    {
-                        queueLocations.Enqueue(StringParser.SetupLocation(line));
-
-                        //Read the next line
-                        line = sr.ReadLine();
-                    }
-                }
-            }
-            
-            //close the file
-            sr.Close();
+            FileDataReader fileDataReader = new FileDataReader(args[0]);
+            droneSquad = fileDataReader.ReadDrones();
+            queueLocations = fileDataReader.ReadPackages();
 
             AssignmentCenterService center = new AssignmentCenterService();
-            center.DroneSquad = droneSquad;
-            center.Locations = queueLocations;
-            center.Execute();
+            center.GeneratePlan(droneSquad, queueLocations);
 
-            center.PrintRoutes();
+            FileDataWriter fileDataWriter = new FileDataWriter();
+            fileDataWriter.Write(center.DronesReady);
+        }
+        catch (InputNotProvidedException inpe)
+        {
+            Console.WriteLine("Exception: " + inpe.Message);
+        }
+        catch (DroneException de)
+        {
+            Console.WriteLine("Exception: " + de.Message);
+        }
+        catch (PackageException pe)
+        {
+            Console.WriteLine("Exception: " + pe.Message);
         }
         catch (Exception e)
         {
@@ -59,7 +39,7 @@ public class Program
         }
         finally
         {
-            Console.WriteLine("Executing finally block.");
+            Console.WriteLine("Assignment Drones was finished!!!");
         }
     }
 }
