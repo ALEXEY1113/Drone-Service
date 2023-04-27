@@ -4,6 +4,6 @@
     {
         public int TripNo { get; set; }
 
-        public List<LocationDelivery> Locations { get; set; }
+        public List<Packages> Locations { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace MyDroneService.Models
 {
-    public class DronePackageOrder
+    public class DroneTripAssignment
     {
         public string DroneName { get; set; }
 
